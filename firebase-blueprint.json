@@ -1,0 +1,120 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Metal manufacturing product catalog item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 120 },
+        "hindiName": { "type": "string", "maxLength": 120 },
+        "category": { "type": "string", "maxLength": 60 },
+        "subCategory": { "type": "string", "maxLength": 80 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "materialInfo": { "type": "string", "maxLength": 300 },
+        "availableSizes": { "type": "string", "maxLength": 300 },
+        "customizationOptions": { "type": "string", "maxLength": 500 },
+        "manufacturingDetails": { "type": "string", "maxLength": 500 },
+        "imageUrls": { "type": "array" },
+        "isFeatured": { "type": "boolean" },
+        "estimatedPrice": { "type": "string", "maxLength": 100 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "category", "description"]
+    },
+    "Enquiry": {
+      "title": "Enquiry",
+      "description": "Customer manufacturing enquiry and quotation request",
+      "type": "object",
+      "properties": {
+        "enquiryId": { "type": "string", "maxLength": 64 },
+        "customerName": { "type": "string", "maxLength": 120 },
+        "mobileNumber": { "type": "string", "maxLength": 20 },
+        "whatsappNumber": { "type": "string", "maxLength": 20 },
+        "email": { "type": "string", "maxLength": 120 },
+        "category": { "type": "string", "maxLength": 60 },
+        "productName": { "type": "string", "maxLength": 120 },
+        "requiredSize": { "type": "string", "maxLength": 100 },
+        "materialPreference": { "type": "string", "maxLength": 100 },
+        "quantity": { "type": "string", "maxLength": 50 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "referenceImageUrl": { "type": "string", "maxLength": 200000 },
+        "deliveryLocation": { "type": "string", "maxLength": 200 },
+        "status": {
+          "type": "string",
+          "enum": ["New Enquiry", "Under Review", "Quotation Sent", "Approved", "Rejected", "Completed"]
+        },
+        "quoteAmount": { "type": "string", "maxLength": 100 },
+        "adminNotes": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["enquiryId", "customerName", "mobileNumber", "category", "description", "status"]
+    },
+    "GalleryItem": {
+      "title": "GalleryItem",
+      "description": "Portfolio work and manufacturing site photographs",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 120 },
+        "category": { "type": "string", "maxLength": 60 },
+        "description": { "type": "string", "maxLength": 500 },
+        "imageUrl": { "type": "string", "maxLength": 2000 },
+        "location": { "type": "string", "maxLength": 100 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "category", "imageUrl"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Designated administrator identity record",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "superadmin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "role"]
+    },
+    "BusinessSettings": {
+      "title": "BusinessSettings",
+      "description": "Global company contact and brand settings",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string", "maxLength": 100 },
+        "brandName": { "type": "string", "maxLength": 100 },
+        "phone1": { "type": "string", "maxLength": 20 },
+        "phone2": { "type": "string", "maxLength": 20 },
+        "whatsappNumber": { "type": "string", "maxLength": 20 },
+        "address": { "type": "string", "maxLength": 250 },
+        "instagram": { "type": "string", "maxLength": 100 },
+        "announcement": { "type": "string", "maxLength": 300 }
+      },
+      "required": ["companyName", "phone1", "whatsappNumber"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Collection of metal manufacturing products"
+    },
+    "/enquiries/{enquiryId}": {
+      "schema": "Enquiry",
+      "description": "Collection of customer manufacturing enquiries and quotes"
+    },
+    "/gallery/{galleryId}": {
+      "schema": "GalleryItem",
+      "description": "Collection of portfolio project photographs"
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Designated administrator credentials"
+    },
+    "/settings/{settingsId}": {
+      "schema": "BusinessSettings",
+      "description": "Global business contact information and settings"
+    }
+  }
+}

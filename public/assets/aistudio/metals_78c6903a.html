@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSP Metals Work | Premium Metal Products & Fabrication</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Product Selector Modal */
+        .selector-container {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid rgba(245, 158, 11, 0.3);
+            border-radius: 20px;
+            padding: 32px;
+            margin: 40px 0;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        
+        .selector-title {
+            text-align: center;
+            color: var(--accent);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+        }
+        
+        .selector-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .step-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 15px;
+            letter-spacing: 0.3px;
+        }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .category-btn, .subcategory-btn {
+            padding: 12px 16px;
+            border: 2px solid rgba(245, 158, 11, 0.3);
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all .3s ease;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .category-btn:hover, .subcategory-btn:hover {
+            border-color: var(--accent);
+            background: rgba(245, 158, 11, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .category-btn.active, .subcategory-btn.active {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+            color: #1a1a1a;
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        
+        .subcategory-section {
+            display: none;
+        }
+        
+        .subcategory-section.show {
+            display: block;
+            animation: fadeInUp 0.4s ease-out;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .send-btn {
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            border: none;
+            transition: all .3s ease;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .send-whatsapp {
+            background: linear-gradient(135deg, #25D366 0%, #20BA58 100%);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+        
+        .send-whatsapp:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+        }
+        
+        .send-instagram {
+            background: linear-gradient(135deg, #E4405F 0%, #d63384 50%, #C13584 100%);
+            box-shadow: 0 4px 12px rgba(228, 64, 95, 0.3);
+        }
+        
+        .send-instagram:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(228, 64, 95, 0.4);
+        }
+        
+        .selected-info {
+            text-align: center;
+            padding: 10px;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 10px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-input-section {
+            display: none;
+        }
+
+        .custom-input-section.show {
+            display: block;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .custom-input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .custom-input-container input {
+            padding: 12px 16px;
+            border: 2px solid rgba(245, 158, 11, 0.3);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all .3s ease;
+        }
+
+        .custom-input-container input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .custom-input-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 640px) {
+            .selector-container {
+                padding: 20px;
+            }
+
+            .selector-title {
+                font-size: 18px;
+            }
+
+            .category-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 8px;
+            }
+
+            .category-btn, .subcategory-btn {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+
+            .send-btn {
+                padding: 12px 20px;
+                font-size: 13px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-buttons .send-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .selector-container {
+                padding: 16px;
+                border-radius: 14px;
+                margin: 20px 0;
+            }
+
+            .selector-title {
+                font-size: 16px;
+                margin-bottom: 16px;
+            }
+
+            .category-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 6px;
+            }
+
+            .category-btn, .subcategory-btn {
+                padding: 8px 10px;
+                font-size: 11px;
+                border-radius: 8px;
+            }
+
+            .send-btn {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav">
+            <a href="index.html" class="brand">
+                <div class="logo">
+                    <img src="https://uploads.onecompiler.io/43u3a24n6/1781176462038/IMG_20260531_195922_268.webp" alt="JSP ForgeCore Logo">
+                </div>
+                <div class="company-info">
+                    <h1>JSP ForgeCore</h1>
+                    <p>Strength • Trust • Quality</p>
+                </div>
+            </a>
+            <div class="top-links">
+                <a href="index.html" class="pill">🏠 Home</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="section-title">
+            <h2>🔧 JSP Metals Work</h2>
+            <p>Premium Metal Products & Expert Fabrication Services</p>
+        </div>
+
+        <div class="products">
+            <div class="item">
+                <img src="https://uploads.onecompiler.io/43u3a24n6/1781176726457/RAILING2.jpeg" alt="Premium Railing">
+                <h3>🚧 Railings (रेलिंग्स)</h3>
+                <p>Decorative & Protective Railings</p>
+            </div>
+
+            <div class="item">
+                <img src="https://uploads.onecompiler.io/43u3a24n6/1781176734282/BED.webp" alt="Metal Bed">
+                <h3>🛏️ Metal Beds (मेटल बेड्स)</h3>
+                <p>Premium Metal Bed Frames</p>
+            </div>
+
+            <div class="item">
+                <img src="https://uploads.onecompiler.io/43u3a24n6/1781176749805/GATE2.webp" alt="Steel Gate">
+                <h3>🚪 Gates (गेट्स)</h3>
+                <p>Strong & Stylish Gate Designs</p>
+            </div>
+
+            <div class="item">
+                <img src="https://uploads.onecompiler.io/43u3a24n6/1781176739319/CHAKKI.webp" alt="Flour Mill">
+                <h3>⚙️ Chakki (चक्की)</h3>
+                <p>Traditional Grain Grinding Mills</p>
+            </div>
+
+            <div class="item">
+                <img src="https://uploads.onecompiler.io/43u3a24n6/1781176730877/chaff-cutter-1-500x500.webp" alt="Chara Kutti Machine">
+                <h3>🌾 Chaff Cutter Machine (चारा/कुट्टी मशीन)</h3>
+                <p>Efficient Fodder Cutting Equipment</p>
+            </div>
+
+            <div class="item">
+                <img src="https://uploads.onecompiler.io/43u3a24n6/44um23kzw/image_1783850044176.png" alt="Custom Work">
+                <h3>🔨 Custom Work (कस्टम वर्क)</h3>
+                <p>Bespoke Metal Fabrication Services</p>
+            </div>
+        </div>
+
+        <div class="selector-container">
+            <div class="selector-title">📋 Select Product to Order</div>
+            <div class="selector-steps">
+                <div>
+                    <span class="step-label">Step 1: Select Product Category</span>
+                    <div class="category-grid" id="metal-categories">
+                        <button class="category-btn" data-category="Railing">🚧 Railing (रेलिंग्स)</button>
+                        <button class="category-btn" data-category="Gate">🚪 Gate (गेट्स)</button>
+                        <button class="category-btn" data-category="Bed">🛏️ Bed (बेड्स)</button>
+                        <button class="category-btn" data-category="Chakki">⚙️ Chakki (चक्की)</button>
+                        <button class="category-btn" data-category="Chara Kutti Machine">🌾 Chara Kutti (चारा/कुट्टी)</button>
+                        <button class="category-btn" data-category="Custom Work">🔨 Custom Work (कस्टम वर्क)</button>
+                    </div>
+                </div>
+                
+                <div class="subcategory-section" id="metal-subcategories">
+                    <span class="step-label">Step 2: Select Subcategory</span>
+                    <div class="category-grid" id="metal-subcategory-list"></div>
+                </div>
+
+                <div class="custom-input-section" id="custom-input-section">
+                    <span class="step-label">Step 2: Describe Your Custom Work</span>
+                    <div class="custom-input-container">
+                        <label class="custom-input-label">📝 Product Details (Product Details / उत्पाद विवरण)</label>
+                        <input type="text" id="custom-product-details" placeholder="e.g., Heavy Iron Gate, Decorative Screen, etc. (उदा. भारी लोहे का दरवाजा, सजावटी स्क्रीन, आदि)">
+                        <label class="custom-input-label">📐 Specifications (आकार/विशेषताएं)</label>
+                        <input type="text" id="custom-specifications" placeholder="e.g., 10x8 feet, Weight approx. 500kg (उदा. 10x8 फीट, वजन लगभग 500 किलो)">
+                    </div>
+                </div>
+                
+                <div class="selected-info" id="metal-selected-info">
+                    Select a category and subcategory to continue
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="send-btn send-whatsapp" id="metal-whatsapp-btn" disabled>
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347\"/></svg>
+                        Order via WhatsApp
+                    </button>
+                    <a href="https://www.instagram.com/jsp.metalworks?igsh=d3kzNG1sOGpqcm95" target="_blank" class="send-btn send-instagram">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm4.965-10.322a1.44 1.44 0 110-2.881 1.44 1.44 0 010 2.881z\"/></svg>
+                        Visit Instagram
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="index.html" class="back">Home</a>
+
+    <footer>
+        <strong>© 2026 JSP ForgeCore - Metals Work Division</strong>
+        <p>📍 Kumharo Ka Mohalla, Cheethawari, Jaipur | 📱 <strong>7023746632</strong></p>
+        <p>Follow us: <strong>@jsp.metalswork</strong> on Instagram</p>
+    </footer>
+
+    <script>
+        // Metal subcategories with bilingual support
+        const metalSubcategories = {
+            'Railing': [
+                'Balcony Railing (बालकनी रेलिंग्स)',
+                'Staircase Railing (सीढ़ी रेलिंग्स)',
+                'Window Grill (खिड़की की जाली)',
+                'Terrace Railing (छत रेलिंग्स)'
+            ],
+            'Gate': [
+                'Main Gate (मुख्य गेट)',
+                'Sliding Gate (स्लाइडिंग गेट)',
+                'Folding Gate (फोल्डिंग गेट)',
+                'Garden Gate (बगीचे का गेट)'
+            ],
+            'Bed': [
+                'Single Bed (सिंगल बेड)',
+                'Double Bed (डबल बेड)',
+                'Bunk Bed (बंक बेड)',
+                'Custom Bed Frame (कस्टम बेड फ्रेम)'
+            ],
+            'Chakki': [
+                'Domestic Chakki (घरेलू चक्की)',
+                'Commercial Chakki (कमर्शियल चक्की)',
+                'Automatic Chakki (ऑटोमैटिक चक्की)',
+                'Manual Chakki (मैनुअल चक्की)'
+            ],
+            'Chara Kutti Machine': [
+                'Electric Model (इलेक्ट्रिक मॉडल)',
+                'Diesel Model (डीजल मॉडल)',
+                'Small Size (छोटा आकार)',
+                'Large Commercial (बड़ा कमर्शियल)'
+            ]
+        };
+
+        let selectedCategory = '';
+        let selectedSubcategory = '';
+
+        // Handle category selection
+        document.getElementById('metal-categories').addEventListener('click', function(e) {
+            if (e.target.classList.contains('category-btn')) {
+                document.querySelectorAll('#metal-categories .category-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.target.classList.add('active');
+                
+                selectedCategory = e.target.dataset.category;
+                selectedSubcategory = '';
+                
+                const subSection = document.getElementById('metal-subcategories');
+                const customSection = document.getElementById('custom-input-section');
+                const subList = document.getElementById('metal-subcategory-list');
+                
+                if (selectedCategory === 'Custom Work') {
+                    subSection.classList.remove('show');
+                    customSection.classList.add('show');
+                    document.getElementById('custom-product-details').value = '';
+                    document.getElementById('custom-specifications').value = '';
+                } else {
+                    customSection.classList.remove('show');
+                    if (metalSubcategories[selectedCategory]) {
+                        subList.innerHTML = metalSubcategories[selectedCategory].map(sub => 
+                            `<button class="subcategory-btn" data-subcategory="${sub}">${sub}</button>`
+                        ).join('');
+                        subSection.classList.add('show');
+                    }
+                }
+                
+                updateMetalInfo();
+            }
+        });
+
+        // Handle subcategory selection
+        document.getElementById('metal-subcategory-list').addEventListener('click', function(e) {
+            if (e.target.classList.contains('subcategory-btn')) {
+                document.querySelectorAll('#metal-subcategory-list .subcategory-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.target.classList.add('active');
+                selectedSubcategory = e.target.dataset.subcategory;
+                updateMetalInfo();
+            }
+        });
+
+        // Handle custom input changes
+        document.getElementById('custom-product-details').addEventListener('input', updateMetalInfo);
+        document.getElementById('custom-specifications').addEventListener('input', updateMetalInfo);
+
+        function updateMetalInfo() {
+            const info = document.getElementById('metal-selected-info');
+            const whatsappBtn = document.getElementById('metal-whatsapp-btn');
+            
+            if (selectedCategory === 'Custom Work') {
+                const details = document.getElementById('custom-product-details').value.trim();
+                const specs = document.getElementById('custom-specifications').value.trim();
+                
+                if (details && specs) {
+                    info.innerHTML = `✅ Selected: <strong>Custom Work (कस्टम वर्क)</strong><br><small>${details} | ${specs}</small>`;
+                    whatsappBtn.disabled = false;
+                } else {
+                    info.innerHTML = `📌 Category: <strong>Custom Work (कस्टम वर्क)</strong> - Please fill in all fields`;
+                    whatsappBtn.disabled = true;
+                }
+            } else if (selectedCategory && selectedSubcategory) {
+                info.innerHTML = `✅ Selected: <strong>${selectedCategory}</strong> → <strong>${selectedSubcategory}</strong>`;
+                whatsappBtn.disabled = false;
+            } else if (selectedCategory) {
+                info.innerHTML = `📌 Category: <strong>${selectedCategory}</strong> - Now select a subcategory`;
+                whatsappBtn.disabled = true;
+            } else {
+                info.innerHTML = 'Select a category and subcategory to continue';
+                whatsappBtn.disabled = true;
+            }
+        }
+
+        // WhatsApp button click
+        document.getElementById('metal-whatsapp-btn').addEventListener('click', function() {
+            let message = '';
+            
+            if (selectedCategory === 'Custom Work') {
+                const details = document.getElementById('custom-product-details').value;
+                const specs = document.getElementById('custom-specifications').value;
+                message = encodeURIComponent(
+                    `Hi JSP Metals Work,\n\nI am interested in Custom Metal Work:\n\n🔨 Category: Custom Work (कस्टम वर्क)\n📝 Product Details: ${details}\n📐 Specifications: ${specs}\n\nPlease provide more details about pricing and availability.\n\nThank you!`
+                );
+            } else if (selectedCategory && selectedSubcategory) {
+                message = encodeURIComponent(
+                    `Hi JSP Metals Work,\n\nI am interested in the following product:\n\n📌 Category: ${selectedCategory}\n📌 Subcategory: ${selectedSubcategory}\n\nPlease provide more details about pricing and availability.\n\nThank you!`
+                );
+            }
+            
+            if (message) {
+                window.open(`https://wa.me/917023746632?text=${message}`, '_blank');
+            }
+        });
+    </script>
+    <script src="script.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"e3c1c9af36de41759418005494a48906","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

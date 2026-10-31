@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isBootstrappedAdmin() {
+      return isSignedIn() && request.auth.token.email == 'jaykumar702374@gmail.com';
+    }
+
+    function isAdmin() {
+      return isBootstrappedAdmin() || (isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidEnquiry(data) {
+      return data.keys().hasAll(['enquiryId', 'customerName', 'mobileNumber', 'category', 'description', 'status'])
+        && data.enquiryId is string && data.enquiryId.size() <= 64
+        && data.customerName is string && data.customerName.size() >= 2 && data.customerName.size() <= 120
+        && data.mobileNumber is string && data.mobileNumber.size() >= 6 && data.mobileNumber.size() <= 20
+        && data.category is string && data.category.size() <= 60
+        && data.description is string && data.description.size() <= 2000
+        && data.status is string && (data.status == 'New Enquiry' || data.status == 'Under Review' || data.status == 'Quotation Sent' || data.status == 'Approved' || data.status == 'Rejected' || data.status == 'Completed');
+    }
+
+    // Admins Collection
+    match /admins/{adminId} {
+      allow read: if isAdmin();
+      allow write: if isBootstrappedAdmin();
+    }
+
+    // Products Collection (Public Catalog, Admin Management)
+    match /products/{productId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(productId);
+    }
+
+    // Portfolio Gallery (Public Showcase, Admin Management)
+    match /gallery/{galleryId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(galleryId);
+    }
+
+    // Business Settings (Public Contact Info, Admin Management)
+    match /settings/{settingsId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(settingsId);
+    }
+
+    // Customer Enquiries and Quotations
+    match /enquiries/{enquiryId} {
+      allow get, list: if isAdmin();
+      allow create: if isValidId(enquiryId) && isValidEnquiry(incoming());
+      allow update, delete: if isAdmin() && isValidId(enquiryId);
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "JSP ForgeCore | Metal Manufacturing & Fabrication",
+  "description": "Precision metal manufacturing and fabrication solutions in Jaipur: premium railings, gates, metal beds, chakki, and chara-kutti machines.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
